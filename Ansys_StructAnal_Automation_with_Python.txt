@@ -1,0 +1,160 @@
+# Configuration: file paths and settings
+import os, clr, datetime
+input_excel_path   = r"C:\path\to\input_loads.xlsx"
+output_excel_path  = r"C:\path\to\output_results.xlsx"
+output_plot_path   = r"C:\path\to\stress_plot.png"
+output_log_path    = r"C:\path\to\analysis_log.txt"
+joint_surfaces_sel = "JointSurfaces"
+
+# Ensure output directory exists
+output_dir = os.path.dirname(output_excel_path)
+if output_dir and not os.path.exists(output_dir):
+    os.makedirs(output_dir)
+
+# Initialize log
+log_file = open(output_log_path, 'w')
+log_file.write("Robot Joint Analysis Automation Log\n")
+log_file.write(f"Start Time: {datetime.datetime.now()}\n")
+log_file.write(f"Input file: {input_excel_path}\n")
+log_file.write("Expected load components: 5 (Fx, Fy, Fz, Mx, My)\n\n")
+
+def load_excel_data(file_path):
+    """Read load cases from an Excel file; return list of (Fx, Fy, Fz, Mx, My) tuples."""
+    data = []
+    try:
+        clr.AddReference('Microsoft.Office.Interop.Excel')
+        from Microsoft.Office.Interop import Excel
+        excel_app = Excel.ApplicationClass()
+        excel_app.Visible = False
+        workbook = excel_app.Workbooks.Open(file_path)
+        sheet = workbook.Worksheets[1]
+        last_row = sheet.Cells(sheet.Rows.Count, 1).End(Excel.XlDirection.xlUp).Row
+        for i in range(1, last_row + 1):
+            vals = [sheet.Cells(i, j).Value2 for j in range(1, 6)]
+            if None in vals: continue
+            data.append(tuple(float(v) for v in vals))
+        workbook.Close(SaveChanges=False)
+        excel_app.Quit()
+        # Release COM objects here if needed...
+    except Exception as err:
+        log_file.write(f"ERROR reading Excel file: {err}\n")
+        raise
+    log_file.write(f"Loaded {len(data)} load cases from '{file_path}'.\n")
+    return data
+
+def apply_loads(force_obj, moment_obj, load_tuple):
+    fx, fy, fz, mx, my = load_tuple
+    force_obj.XComponent.Output.SetDiscreteValue(0, Quantity(fx, "N"))
+    force_obj.YComponent.Output.SetDiscreteValue(0, Quantity(fy, "N"))
+    force_obj.ZComponent.Output.SetDiscreteValue(0, Quantity(fz, "N"))
+    moment_obj.XComponent.Output.SetDiscreteValue(0, Quantity(mx, "N*m"))
+    moment_obj.YComponent.Output.SetDiscreteValue(0, Quantity(my, "N*m"))
+
+def run_simulation(analysis):
+    try:
+        analysis.Solve()
+        return True
+    except Exception as err:
+        log_file.write(f"ERROR solving: {err}\n")
+        return False
+
+def extract_max_stress(stress_result):
+    stress_result.EvaluateAllResults()
+    return stress_result.Maximum
+
+# --- Main Workflow ---
+load_cases = load_excel_data(input_excel_path)
+if not load_cases: raise Exception("No load cases found.")
+
+model = ExtAPI.DataModel.Project.Model
+analysis = model.Analyses[0]
+
+joint_ns = ExtAPI.DataModel.Tree.GetObjectsByName(joint_surfaces_sel)[0]
+with ExtAPI.DataModel.Tree.Suspend():
+    force_load  = analysis.AddForce()
+    force_load.Name = "Joint Force"
+    force_load.Location = joint_ns
+    force_load.DefineBy = LoadDefineBy.Components
+    moment_load = analysis.AddMoment()
+    moment_load.Name = "Joint Moment"
+    moment_load.Location = joint_ns
+    moment_load.DefineBy = LoadDefineBy.Components
+
+# Ensure an Equivalent Stress result exists
+stress_result = None
+for res in analysis.Solution.Children:
+    if res.ObjectType == Ansys.ACT.Automation.Mechanical.Results.EquivalentStress:
+        stress_result = res; break
+if stress_result is None:
+    stress_result = analysis.Solution.AddEquivalentStress()
+    stress_result.Name = "Equivalent Stress"
+
+log_file.write("Initial load and stress objects setup complete.\n")
+log_file.write(f"Running {len(load_cases)} load cases...\n\n")
+
+max_stress_values = []
+for idx, loads in enumerate(load_cases, start=1):
+    log_file.write(f"Case {idx}: loads={loads} ... ")
+    apply_loads(force_load, moment_load, loads)
+    if not run_simulation(analysis):
+        log_file.write("Solve failed.\n")
+        max_stress_values.append(None)
+        continue
+    ms = extract_max_stress(stress_result)
+    max_stress_values.append(ms)
+    log_file.write(f"Max Stress = {ms/1e6:.2f} MPa\n")
+
+# Write results to Excel
+try:
+    from Microsoft.Office.Interop import Excel
+    excel_app = Excel.ApplicationClass()
+    excel_app.Visible = False
+    wb = excel_app.Workbooks.Add()
+    sh = wb.Worksheets[1]
+    headers = ["Case", "Fx (N)", "Fy (N)", "Fz (N)", "Mx (N*m)", "My (N*m)", "Max Stress (Pa)"]
+    for col, head in enumerate(headers, start=1):
+        sh.Cells(1, col).Value2 = head
+    row = 2
+    for i, loads in enumerate(load_cases, start=1):
+        fx, fy, fz, mx, my = loads
+        sh.Cells(row, 1).Value2 = i
+        sh.Cells(row, 2).Value2 = fx
+        sh.Cells(row, 3).Value2 = fy
+        sh.Cells(row, 4).Value2 = fz
+        sh.Cells(row, 5).Value2 = mx
+        sh.Cells(row, 6).Value2 = my
+        sh.Cells(row, 7).Value2 = max_stress_values[i-1] or "SolveFailed"
+        row += 1
+    wb.SaveAs(output_excel_path)
+    wb.Close(SaveChanges=True)
+    excel_app.Quit()
+    log_file.write(f"Results written to: {output_excel_path}\n")
+except Exception as err:
+    log_file.write(f"ERROR writing Excel: {err}\n")
+
+# Generate stress plot using .NET charting
+try:
+    clr.AddReference('System.Windows.Forms')
+    clr.AddReference('System.Windows.Forms.DataVisualization')
+    from System.Drawing import Color
+    from System.Windows.Forms.DataVisualization.Charting import Chart, ChartArea, Series, SeriesChartType, ChartImageFormat
+    chart = Chart()
+    chart.Width, chart.Height = 600, 400
+    chart.ChartAreas.Add(ChartArea("MainArea"))
+    series = Series("Stress")
+    series.ChartType = SeriesChartType.Line
+    series.Color = Color.Blue; series.BorderWidth = 2
+    for i, s in enumerate(max_stress_values, start=1):
+        if s is not None:
+            series.Points.AddXY(i, s/1e6)
+    chart.Series.Add(series)
+    chart.ChartAreas["MainArea"].AxisX.Title = "Load Case"
+    chart.ChartAreas["MainArea"].AxisY.Title = "Max Stress (MPa)"
+    chart.SaveImage(output_plot_path, ChartImageFormat.Png)
+    log_file.write(f"Stress plot saved to: {output_plot_path}\n")
+except Exception as err:
+    log_file.write(f"ERROR plotting: {err}\n")
+
+log_file.write(f"End Time: {datetime.datetime.now()}\n")
+log_file.write("Automation completed.\n")
+log_file.close()
