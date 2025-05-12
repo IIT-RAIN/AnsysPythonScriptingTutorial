@@ -16,8 +16,9 @@ Output includes:
 
 <p>This project is modularised for clarity and maintainability. Each major task (e.g. reading data, applying loads, solving, writing output) is encapsulated in its own script.
 The main.py script coordinates these modules to execute the complete automation workflow.
-While this project is tailored to ANSYS users familiar with Mechanical scripting and structural simulation workflows, the structure can be adapted by anyone comfortable with Python automation.
-Below, the main script is explained, along with all the functions used in it.</p>
+This project is tailored to ANSYS users familiar with structural simulation workflows.</p>
+
+<p> Before starting the simulation, the simulation environment must be set up. Firstly, </p>
 
 The *main.py* file is the entry point. It:
 <ul>
