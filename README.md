@@ -19,26 +19,24 @@ The main.py script coordinates these modules to execute the complete automation 
 While this project is tailored to ANSYS users familiar with Mechanical scripting and structural simulation workflows, the structure can be adapted by anyone comfortable with Python automation.
 Below, the main script is explained, along with all the functions used in it.</p>
 
-
-
-
-
 The *main.py* file is the entry point. It:
-	-Defines all file paths (input loads, output results, plot image, and log).
-	-Initialises a log via setup_log, so directory creation and header writing happen in one place.
-	-Loads the Excel data using load_excel_data, yielding a list of (Fx, Fy, Fz, Mx, My) tuples.
-	-Fetches the ANSYS model and analysis objects from the Workbench API (ExtAPI).
-	-Locates the “JointSurfaces” named selection for scoping loads.
-	-Adds Force and Moment objects (component‐defined) and ensures an Equivalent Stress result is ready.
-	-Loops over every load case:
-	-Applies the current load via apply_loads.
-	-Calls run_simulation; if it fails, logs "Solve failed" and records None.
-	-On success, extracts the max von Mises stress with extract_max_stress, logs it, and appends it.
-	-Writes out the Excel results with write_excel_results.
-	-Plots stress vs. case index using plot_results.
-	-Closes the log with an end timestamp.
+<ul>
+	<li>Defines all file paths (input loads, output results, plot image, and log)</li>
+ 	<li>Initialises a log via setup_log, so directory creation and header writing happen in one place</li>
+  	<li>Loads the Excel data using load_excel_data, yielding a list of (Fx, Fy, Fz, Mx, My) tuples</li>
+   	<li>Fetches the ANSYS model and analysis objects from the Workbench API (ExtAPI)</li>
+    	<li>Locates the “JointSurfaces” named selection for scoping loads</li>
+     	<li>Adds Force and Moment objects (component‐defined) and ensures an Equivalent Stress result is ready</li>
+      	<li>Loops over every load case</li>
+       	<li>Applies the current load</li>
+	<li>Calls run_simulation; if it fails, logs "Solve failed" and records None</li>
+	<li>On success, extracts the max von Mises stress with extract_max_stress, logs it, and appends it</li>
+	<li>Writes out the Excel results with write_excel_results</li>
+	<li>Plots stress vs. case index using plot_results</li>
+	<li>Closes the log with an end timestamp</li>
+</ul>
 
-FUNCTIONS:
+<h2>FUNCTIONS</h2>
 
 *setup_log.py* summarises all log-file setup:
 	-Directory creation: Ensures the log’s parent folder exists.
