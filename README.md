@@ -22,7 +22,7 @@ Before starting the simulation, the simulation environment must be set up. First
 Then, the scripting console should be accessed via *Automation* -> *Scripting*.
 Below is presented the ACT Console and its functionalities:
 
-![The ACT Console](https://github.com/IIT-RAIN/AnsysPythonScriptingTutorial/tree/main/Images/console.png)
+![The ACT Console](Images/console.png)
 
 
 The *main.py* file is the entry point. It:
