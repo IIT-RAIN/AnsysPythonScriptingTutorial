@@ -23,7 +23,7 @@ Before starting the simulation, the simulation environment must be set up. First
 Then, the scripting console should be accessed via *Automation* --> *Scripting*.
 Below is presented the ACT Console and the its functionalities:
 </p>
-![console](https://github.com/user-attachments/assets/31e190eb-4a54-4f4b-8555-5bba946be134)
+![Image](https://github.com/user-attachments/assets/fa39daf6-b688-4139-b768-79780d9d4c71)
 
 
 The *main.py* file is the entry point. It:
