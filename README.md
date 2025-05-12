@@ -26,15 +26,16 @@ Below is presented the ACT Console and its functionalities:
 
 By clicking on *open script* on the ACT Console, the main script can be loaded into the Editor.
 The Ansys Project should appear as follows:
+
 ![Ansys Workbench Project](Images/Ansys_Workbench_Project_Layout.png)
 
 As can be seen from the image, there are three named selections in the model tree, corresponding to the support surface, the load surface, and the stress scoping surface, respectively.
 The following images show the surfaces corresponding to each named selection.
 
+
 | **Support Surface**             | **Load Surface**                                 | **Stress Surface**                                |
 |:-------------------------------:|:------------------------------------------------:| :------------------------------------------------:|
-| ![](Images/SupportFaces.png)    |            ![](Images/LoadFaces.png)             | ![](Images/StressSurface.png)  |
-
+| ![](Images/SupportFaces.png)    |            ![](Images/LoadFaces.png)             | ![](Images/StressSurface.png)                     |
 
 
 The *main.py* file is the entry point. It:
