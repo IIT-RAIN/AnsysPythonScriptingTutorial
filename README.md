@@ -1,8 +1,8 @@
 <h1> Automation of the Structural Analysis on a Robot Link via Scripting in Ansys Workbench: A Tutorial </h1>
 
-This automation toolkit is designed for users of ANSYS Mechanical Workbench who need to perform a large number of static structural simulations. 
+<p> This automation toolkit is designed for users of ANSYS Mechanical Workbench who need to perform a large number of static structural simulations. 
 Specifically, multiple load cases are applied to a common geometry, such as a robotic joint or mechanical assembly. 
-Instead of manually changing loads and solving each case one by one, this Python script automates the entire process.
+Instead of manually changing loads and solving each case one by one, this Python script automates the entire process. </p>
 
 Using the ANSYS scripting API (ExtAPI) along with Microsoft Excel COM interop, the script reads a list of force and moment inputs from an Excel file,
 applies them in sequence, solves each case, and logs the maximum von Mises stress results.
