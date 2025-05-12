@@ -6,7 +6,7 @@ Instead of manually changing loads and solving each case one by one, this Python
 
 <p> Using the ANSYS scripting API (ExtAPI) along with Microsoft Excel COM interop, the script reads a list of force and moment inputs from an Excel file,
 applies them in sequence, solves each case, and logs the maximum von Mises stress results.
-Output include: 
+Output includes: 
 <ul>
 	<li>A structured Excel file containing the input and resulting stress for each case</li>
 	<li>A line plot visualizing stress trends across load cases</li>
