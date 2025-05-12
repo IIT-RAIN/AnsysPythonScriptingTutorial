@@ -19,7 +19,7 @@ The main.py script coordinates these modules to execute the complete automation 
 This project is tailored to ANSYS users familiar with structural simulation workflows.</p>
 
 Before starting the simulation, the simulation environment must be set up. Firstly, the CAD model named "link1" should be imported into the Workbench Static Structural project and attached to *Geometry*.
-Then, the scripting console should be accessed via *Automation* --> *Scripting*.
+Then, the scripting console should be accessed via *Automation* -> *Scripting*.
 Below is presented the ACT Console and its functionalities:
 
 ![The ACT Console](https://github.com/IIT-RAIN/AnsysPythonScriptingTutorial/tree/main/Images/console.png)
