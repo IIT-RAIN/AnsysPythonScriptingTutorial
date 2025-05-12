@@ -22,8 +22,18 @@ Before starting the simulation, the simulation environment must be set up. First
 Then, the scripting console should be accessed via *Automation* -> *Scripting*.
 Below is presented the ACT Console and its functionalities:
 
-![The ACT Console](Images/console.png){width=5 height=5}
+![The ACT Console](Images/console.png)
 
+By clicking on *open script* on the ACT Console, the main script can be loaded into the Editor.
+The Ansys Project should appear as follows:
+![Ansys Workbench Project](Images/Ansys_Workbench_Project_Layout.png)
+
+As can be seen from the image, there are three named selections in the model tree, corresponding to the support surface, the load surface, and the stress scoping surface, respectively.
+The following images show the surfaces corresponding to each named selection.
+
+| **Support Surface**             | **Load Surface**                                 | **Stress Surface**                                |
+|:-------------------------------:|:------------------------------------------------:| :------------------------------------------------:|
+| ![](Images/SupportFaces.png)    |            ![](Images/LoadFaces.png)             | ![](Images/StressFaces.png)  |
 
 
 
