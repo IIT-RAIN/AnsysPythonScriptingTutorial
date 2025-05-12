@@ -4,12 +4,15 @@
 Specifically, multiple load cases are applied to a common geometry, such as a robotic joint or mechanical assembly. 
 Instead of manually changing loads and solving each case one by one, this Python script automates the entire process. </p>
 
-Using the ANSYS scripting API (ExtAPI) along with Microsoft Excel COM interop, the script reads a list of force and moment inputs from an Excel file,
+<p> Using the ANSYS scripting API (ExtAPI) along with Microsoft Excel COM interop, the script reads a list of force and moment inputs from an Excel file,
 applies them in sequence, solves each case, and logs the maximum von Mises stress results.
-Output include
--A structured Excel file containing the input and resulting stress for each case
--A line plot visualizing stress trends across load cases
--A detailed log of all simulation steps, useful for troubleshooting and verification
+Output include: 
+<ul>
+	<li>A structured Excel file containing the input and resulting stress for each case</li>
+	<li>A line plot visualizing stress trends across load cases</li>
+	<li>A detailed log of all simulation steps, useful for troubleshooting and verification</li>
+</ul>
+</p>
 
 This project is modularized for clarity and maintainability. Each major task (e.g. reading data, applying loads, solving, writing output) is encapsulated in its own script.
 The main.py script coordinates these modules to execute the complete automation workflow.
