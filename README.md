@@ -33,7 +33,7 @@ The following images show the surfaces corresponding to each named selection.
 
 | **Support Surface**             | **Load Surface**                                 | **Stress Surface**                                |
 |:-------------------------------:|:------------------------------------------------:| :------------------------------------------------:|
-| ![](Images/SupportFaces.png)    |            ![](Images/LoadFaces.png)             | ![](Images/StressFaces.png)  |
+| ![](Images/SupportFaces.png)    |            ![](Images/LoadFaces.png)             | ![](Images/StressSurface.png)  |
 
 
 
