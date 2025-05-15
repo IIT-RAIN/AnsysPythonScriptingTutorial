@@ -27,16 +27,17 @@ Below is presented the ACT Console and its functionalities:
 By clicking on *open script* on the ACT Console, the main script can be loaded into the Editor.
 The Ansys Project should appear as follows:
 
- ![Ansys Workbench Project](Images/layout.png)
+![Ansys Workbench Project](Images/layout.PNG)
 
 As can be seen from the image, there are three named selections in the model tree, corresponding to the support surface, the load surface, and the stress scoping surface, respectively.
 The following images show the surfaces corresponding to each named selection.
 
 
- | **Support Surface**             | **Load Surface**                                 | **Stress Surface**                                |
- |:-------------------------------:|:------------------------------------------------:| :------------------------------------------------:|
- | ![](Images/SupportFaces.png)    |            ![](Images/LoadFaces.png)             | ![](Images/StressSurface.png)                     |
+| **Support Surface**             | **Load Surface**                                 | **Stress Surface**                                |
+|:-------------------------------:|:------------------------------------------------:| :------------------------------------------------:|
+| ![](Images/SupportFaces.PNG)    |            ![](Images/LoadFaces.PNG)             | ![](Images/StressSurface.PNG)                     |
 
+After having prepared the Workbench environment for the simulation, the main script of the automation must be uploaded on the console, by clicking on *open script*.
 
 The *main.py* file is the entry point. It:
 <ul>
@@ -57,44 +58,58 @@ The *main.py* file is the entry point. It:
 
 <h2>FUNCTIONS</h2>
 
+The functions used in the main code are summarized in the following.
+
 *setup_log.py* summarises all log-file setup:
-	-Directory creation: Ensures the log’s parent folder exists.
-	-File opening: Opens analysis_log.txt for writing (overwriting any old log).
-	-Header writing: Stamps the start time and log path.
-	Return value: an open file handle (log_file) that every other module writes into.
+<ul>
+	<li>Directory creation: Ensures the log’s parent folder exists. </li>
+	<li>File opening: Opens analysis_log.txt for writing (overwriting any old log). </li>
+	<li>Header writing: Stamps the start time and log path. </li>
+	<li>Return value: an open file handle (log_file) that every other module writes into. </li>
+</ul>
 
 *load_excel_data.py* handles Excel input via COM interop:
-	-References Microsoft.Office.Interop.Excel to drive Excel invisibly.
-	-Opens the workbook, picks the first worksheet, and finds the last used row in column A.
-	-Iterates rows 1 – last, reading five columns: Fx, Fy, Fz, Mx, My.
-	-Filters out any row missing a value.
-	-Closes/quits Excel and releases COM objects to avoid open background Excel processes.
-	-Logs the count of load cases read.
-	Returns a list of tuples (5 floats).
+
+<ul>
+	<li>References Microsoft.Office.Interop.Excel to drive Excel invisibly. </li>
+	<li>Opens the workbook, picks the first worksheet, and finds the last used row in column A.</li>
+	<li>Iterates rows 1 – last, reading five columns: Fx, Fy, Fz, Mx, My.</li>
+	<li>Filters out any row missing a value.</li>
+	<li> Closes/quits Excel and releases COM objects to avoid open background Excel processes.</li>
+	<li> Logs the count of load cases read.</li>
+	<li> Returns a list of tuples (5 floats).</li>
+</ul>
 
 *run_simulation.py* Keeps the solve‐and‐error logic in one spot:
-	-Calls analysis.Solve() inside a try/except.
-	-On success, returns True.
-	-On solver exceptions, logs the error message, returns False.
-	Because the function gives back a True or a False, the loop can easily check whether to continue or skip, without messy logic.
-
+<ul>
+	<li>Calls analysis.Solve() inside a try/except.</li>
+	<li>On success, returns True.</li>
+	<li>On solver exceptions, logs the error message, returns False.</li>
+	<li>Because the function gives back a True or a False, the loop can easily check whether to continue or skip, without messy logic.</li>
+</ul>
 
 *extract_max_stress.py* : After a successful solve, this module:
-	-Calls stress_result.EvaluateAllResults() to refresh result data.
-	-Reads stress_result.Maximum, which holds the peak von Mises stress in Pascals.
-	-Returns that numeric value for downstream logging, plotting, and Excel output.
 
+<ul>
+	<li>Calls stress_result.EvaluateAllResults() to refresh result data.</li>
+	<liReads stress_result.Maximum, which holds the peak von Mises stress in Pascals.</li>
+	<li>Returns that numeric value for downstream logging, plotting, and Excel output.</li>
+</ul>
+		
 *write_excel_results.py* writes all cases and stresses into a new Excel workbook:
-	-Reuses the Excel COM interop technique to create a fresh workbook.
-	-Writes a header row (Case, Fx, Fy, Fz, Mx, My, Max Von Mises).
-	-Iterates through load_cases and max_stress_values in parallel:
-		-Case index in column A.
-		-Input values in columns B – F.
-		-Stress (or "SolveFailed") in column G.
-	-Saves and closes the workbook, releases COM objects, and logs the output path.
+
+<ul>
+	<li>Reuses the Excel COM interop technique to create a fresh workbook.</li>
+	<li>Writes a header row (Case, Fx, Fy, Fz, Mx, My, Max Von Mises).</li>
+	<li>Iterates through load_cases and max_stress_values in parallel: case index in column A; input values in columns B – F; Stress (or "SolveFailed") in column G </li>
+	<li> Saves and closes the workbook, releases COM objects, and logs the output path.</li>
+</ul>
 
 *plot_results.py* generates a line chart of stress vs. load‐case index:
-	-Uses System.Windows.Forms.DataVisualization.Charting to build a Chart object.
-	-Adds a single Series of type Line, iterating non‐None stresses (converted to MPa).
-	-Configures axis titles (“Load Case” and “Max von Mises Stress (MPa)”).
-	-Saves the chart to the specified PNG path and logs success or any plotting errors.
+
+<ul>
+	<li>Uses System.Windows.Forms.DataVisualization.Charting to build a Chart object.</li>
+	<li>Adds a single Series of type Line, iterating non‐None stresses (converted to MPa).</li>
+	<li>Configures axis titles (“Load Case” and “Max von Mises Stress (MPa)”).</li>
+	<li> Saves the chart to the specified PNG path and logs success or any plotting errors.</li>
+</ul>
